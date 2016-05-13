@@ -12,7 +12,7 @@ useragent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/6
 headers = {'User-Agent' : useragent}
 
 try:
-    request = urllib2.Request(url, headers = headers)
+    request = urllib2.Request(url = url, headers = headers)
     response = urllib2.urlopen(request)
     
     content = response.read().decode('utf-8')
