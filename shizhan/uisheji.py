@@ -124,4 +124,4 @@ class UI:
 
 
 ui = UI()
-ui.start(1, 20)
+ui.start(1, 50)
