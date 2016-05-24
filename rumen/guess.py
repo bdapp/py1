@@ -21,4 +21,4 @@ while True:
     if guess == result:
         print 'It\'s ok'       
         break 
-            
+

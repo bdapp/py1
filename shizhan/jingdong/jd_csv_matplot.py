@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 
 import csv
-import matplotlib.pyplot as plt
-import numpy as np
+#import matplotlib.pyplot as plt
+#import numpy as np
 import random
 import json
 import webbrowser
@@ -10,7 +10,7 @@ import webbrowser
 
 def get_csv():
     ll = []
-    with open('/home/ubt/mo.csv', 'rb') as f:
+    with open('./file/huawei.csv', 'rb') as f:
         rows = csv.reader(f, delimiter=',', quotechar='|')
         for r in rows:
             if r[len(r)-1]!='评价':
@@ -56,17 +56,19 @@ def show_plot():
     j = json.dumps(data)
     print j
 
-    with open('../html/data.js', 'wb') as f:
+    with open('./html/data.js', 'wb') as f:
         co = 'var c=' + j
         f.write(co)
 
     # 写入图片
+    '''
     pos = np.arange(len(value))
     plt.bar(pos, value, color=getColors(value), alpha=1)
     plt.show()
+    '''
 
     # 打开网页
-    webbrowser.open('../html/py.html')
+    webbrowser.get('C:\Users\Administrator\AppData\Local\Google\Chrome\Application\chrome.exe %s').open('../html/py.html')
 
 
 

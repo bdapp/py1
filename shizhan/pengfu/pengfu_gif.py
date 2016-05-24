@@ -50,7 +50,7 @@ class PENGFU:
         request = urllib2.Request(url)
         response = urllib2.urlopen(request)
         result = response.read()
-        with open('/home/ubt/peng/' + name + '.gif', 'wb') as f:
+        with open('./peng/' + name + '.gif', 'wb') as f:
             f.write(result)
 
 pengfu = PENGFU()

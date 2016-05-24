@@ -53,7 +53,7 @@ class LFGIF:
     # 下载GIF图片
     def downFile(self, name, url):
         print url
-        folder = '/home/ubt/gif/'
+        folder = './gif/'
         isExist = os.path.exists(folder)
         if not isExist :
             os.makedirs(folder)

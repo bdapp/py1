@@ -10,33 +10,59 @@ import time
 
 class JD:
     def __init__(self):
-        self.baseUrl = 'http://list.jd.com/list.html?cat=9987,653,655&ev=exbrand_18374&area=12,978,3391&go=0&JL=6_0_0&ms=6&page='
-        self.file = '/home/ubt/mm_xiaomi.csv'
+        # 手机分类页面
+        self.baseUrl = 'http://list.jd.com/list.html?cat=9987%2C653%2C655&go=0'
+        # 手机品牌名称
+        self.fileNameList = []
+        # 产品参数
         self.paramList = []
 
 
     # 开启网络请求
     def requestOpener(self, url):
-        try:
-            opener = urllib2.build_opener(urllib2.HTTPHandler())
-            opener.addheaders = [('User_Agent',
-                                  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36')]
-            response = opener.open(url, timeout=20)
-            return response.read()
-        except urllib2.HTTPError, e:
-            print e.code
-            return ''
-        except urllib2.URLError, e:
-            print e.reason
-            return ''
-        except SocketError, e:
-            print 'SocketError: ' + str(e.errno)
+        flag = 0
+        while True:
+            try:
+                opener = urllib2.build_opener(urllib2.HTTPHandler())
+                if flag != 0:
+                    opener.addheaders = [('User_Agent',
+                                          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36')]
+                else:
+                    opener.addheaders = [('User_Agent',
+                                          'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0')]
+                response = opener.open(url, timeout=20)
+                return response.read()
+            except urllib2.HTTPError, e:
+                print e.code
+                #return ''
+            except urllib2.URLError, e:
+                print e.reason
+                #return ''
+            except SocketError, e:
+                print 'SocketError: ' + str(e.errno)
+                #return ''
+            flag += 1
+            time.sleep(3)
+            if flag == 3:
+                return ''
 
+    # 创建文件
+    def createCSV(self, name):
+        #print name
+        try:
+            with open(name, 'ab') as f:
+                f.write(codecs.BOM_UTF8)
+                w = csv.writer(f, dialect='excel')
+                w.writerow([])
+
+            self.fileNameList.append(name)
+        except Exception:
+            print '创建文件失败'
 
     # 写入文件
-    def writeCSV(self, boo):
+    def writeCSV(self, file, boo):
         try:
-            with open(self.file, 'ab') as f:
+            with open(file, 'ab') as f:
                 f.write(codecs.BOM_UTF8)
                 w = csv.writer(f, dialect='excel')
                 if boo:
@@ -63,7 +89,7 @@ class JD:
         for i in r1:
             parameDict[i[0]] = i[1]
 
-        print len(parameDict)
+        #print len(parameDict)
         parames.append(parameDict.get('品牌',''))
         parames.append(parameDict.get('型号',''))
         parames.append(price)
@@ -88,8 +114,8 @@ class JD:
         parames.append(comment)
 
         self.paramList.append(parames)
-        print len(self.paramList)
-        print '获取完成'
+        #print len(self.paramList)
+        #print '获取完成'
 
 
     # 获取产品价格
@@ -136,7 +162,7 @@ class JD:
 
     # 开始执行任务
     def start(self, fromPge, toPge):
-        startTime = time.time()
+
         for i in range(fromPge, toPge+1):
             print '第' + str(i) + '页扫描开始～～～～～～～～～～～～～～～～'
             content = self.requestOpener(self.baseUrl + str(i))
@@ -146,7 +172,68 @@ class JD:
             else:
                 self.writeCSV(False)
             self.paramList = []
-        print '总共用时' + str(time.time()-startTime)
+
+
+    # 获取产品分页码和url
+    def getPerProduct(self, url):
+        try:
+            content = self.requestOpener(url)
+            #print content
+            pattern = re.compile('<span class="fp-text">.*?<i>(.*?)</i>.*?class="hide ">0</a>.*?href="(.*?)"',re.S)
+            res = re.search(pattern, content)
+            return res
+        except Exception:
+            print '获取手机的分页信息异常'
+            return None
+
+
+    # 根据分页获取每页数据
+    def getPgeProducts(self, url, file):
+        res = self.getPerProduct(url)
+        # 处理有分页情况
+        if res != None:
+            print res.group(1) + res.group(2)
+            num = res.group(1)
+            url = res.group(2)
+            url = url.replace('page=1', 'page=')
+
+            for i in range(1, int(num) + 1):
+                u = url.replace('page=', 'page=' + str(i))
+                print u
+                content = self.requestOpener('http://list.jd.com' + u)
+                self.getDetailUrl(content)
+                if i == 1:
+                    self.writeCSV(file, True)
+                else:
+                    self.writeCSV(file, False)
+                self.paramList = []
+        else:
+            content = self.requestOpener('http://list.jd.com' + url)
+            self.getDetailUrl(content)
+            self.writeCSV(file, True)
+            self.paramList = []
+
+
+
+
+
+    def index(self):
+        startTime = time.time()
+
+        content = self.requestOpener(self.baseUrl)
+        p = re.compile('data-initial=\'.*?href="(.*?)".*?title="(.*?)"', re.S)
+        s = re.findall(p, content)
+        for i in s:
+            print i[0] + ' tt ' + i[1]
+            file_name = './file/'+i[1]+'.csv'
+            #self.createCSV(file_name)
+            self.getPgeProducts('http://list.jd.com' + i[0], file_name)
+
+        print '总共用时' + str(time.time() - startTime)
+
+
+
 
 jd = JD()
-jd.start(1, 3)
+#jd.start(1, 4)
+jd.index()
