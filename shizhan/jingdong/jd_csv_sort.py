@@ -17,12 +17,12 @@ class ADD:
         try:
             p = re.compile('(\w*\s(\d|\w\d)(\.\d*|\d*))', re.S)
             v = re.search(p, version)
-            print ';; ' + version
-            print v.group(1).strip()
+            # print ';; ' + version
+            # print v.group(1).strip()
             return v.group(1).strip()
         except Exception:
-            print '获取系统版本异常'
-            print ''
+            # print '获取系统版本异常'
+            return ''
 
 
     def get_csv_list(self):
@@ -39,7 +39,7 @@ class ADD:
                         if ver is None or ver == '':
                             ver = ''
                         ll.append((r[1].upper(), int(r[len(r) - 1]), ver))
-                print len(ll)
+                # print len(ll)
 
                 return ll
 
@@ -52,7 +52,7 @@ class ADD:
         ll = self.get_csv_list()
         # 对list的第一次排序(产品型号)
         ll.sort(lambda x, y: cmp(x[0], y[0]))
-        print ll
+        # print ll
         # 对排序好的list的评价进行合并试算
         n = ''
         v = 0
@@ -67,7 +67,7 @@ class ADD:
                 n = i[0]
                 v = i[1]
 
-        print len(ln)
+        # print len(ln)
 
         # 对相加生成的新list进行按评价多少排序
         ln.sort(lambda x, y: cmp(x[1], y[1]))
@@ -81,7 +81,7 @@ class ADD:
         ll = self.get_csv_list()
         # 对list的第一次排序(系统版本)
         ll.sort(lambda x, y: cmp(x[2], y[2]))
-        print ll
+        # print ll
         # 对排序好的list的评价进行合并试算
         c = ''
         v = 0
@@ -97,12 +97,12 @@ class ADD:
                 c = i[2]
                 v = i[1]
 
-        print len(ln)
+        # print len(ln)
 
         # 对相加生成的新list进行按评价多少排序
         ln.sort(lambda x, y: cmp(x[1], y[1]))
         # 对排序完的新list进行反转（变成从大到小）
         ln.reverse()
-        print ln
+        # print ln
         return ln
 

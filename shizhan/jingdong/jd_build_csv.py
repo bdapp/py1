@@ -6,6 +6,7 @@ import csv
 from socket import error as SocketError
 import codecs
 import time
+import get_mobile_id
 
 
 class JD:
@@ -208,15 +209,23 @@ class JD:
                     self.writeCSV(file, False)
                 self.paramList = []
         else:
-            content = self.requestOpener('http://list.jd.com' + url)
+            content = self.requestOpener(url)
             self.getDetailUrl(content)
             self.writeCSV(file, True)
             self.paramList = []
 
 
+    # 获取品牌的英文名
+    def getEngName(self, name):
+        try:
+            p = re.compile('\\w+', re.S)
+            r = re.search(p, name)
+            return r.group(0).upper()
+        except Exception:
+            print '获取品牌英文名异常'
+            return name
 
-
-
+    # 推荐品牌
     def index(self):
         startTime = time.time()
 
@@ -225,15 +234,28 @@ class JD:
         s = re.findall(p, content)
         for i in s:
             print i[0] + ' tt ' + i[1]
-            file_name = './file/'+i[1]+'.csv'
-            #self.createCSV(file_name)
+            file_name = './file/'+self.getEngName(i[1])+'.csv'
+
             self.getPgeProducts('http://list.jd.com' + i[0], file_name)
 
         print '总共用时' + str(time.time() - startTime)
 
 
+    # 选择品牌
+    def select(self):
+        startTime = time.time()
+        mo_id = get_mobile_id.GETID().start()
+        for i in mo_id:
+            print i
+            url = 'http://list.jd.com/list.html?cat=9987%2C653%2C655&go=0&ev=exbrand_' + i[0]
+            file_name = './file/' + self.getEngName(i[1]) + '.csv'
+            # print url
+            # print file_name
+            self.getPgeProducts(url, file_name)
+
+        print '总共用时' + str(time.time() - startTime)
 
 
 jd = JD()
-#jd.start(1, 4)
-jd.index()
+# jd.index()
+jd.select()

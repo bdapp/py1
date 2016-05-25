@@ -2,6 +2,7 @@
 
 import urllib2
 import re
+from socket import error as SocketError
 
 '''
 爱卡汽车--车型、价格大全
@@ -31,7 +32,7 @@ class XCAR:
 
 
     def writeFile(self, name, price, isType):
-        with open('../file/car.txt', 'ab+') as f:
+        with open('./file/car.txt', 'ab+') as f:
             if isType:
                 f.write('\n----------- '+name+' -----------\n')
             else:

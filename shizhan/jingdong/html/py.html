@@ -8,71 +8,97 @@
     <script type="text/javascript" src="./data.js"></script>
 </head>
 <body>
- <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+ <!-- 为ECharts准备一个具备大小（宽高）的Dom
     <div id="main" style="width: 900px;height:400px;"></div>
-    <div id="m_system" style="width: 900px;height:400px;"></div>
+    <div id="m_system" style="width: 900px;height:400px;"></div> -->
 
     <script type="text/javascript">
-        var myChart1 = echarts.init(document.getElementById('main'));
-        // 显示标题，图例和空的坐标轴
-        myChart1.setOption({
-            title: {
-                text: '京东【华为】手机热门排行'
-            },
-            tooltip: {},
-            legend: {
-                data:['华为']
-            },
-            xAxis: {
-                data: daxian_csvc.categories,
-                axisLabel : {
-                show:true,
-                interval: 0
-               }
-            },
-            yAxis: {},
-            series: [{
-                name: '华为',
-                type: 'bar',
-                data:daxian_csvc.data
-            }]
-        });
+        for(var i=1;i<=num;i++){
+            var newElement3=document.createElement("div");
+            newElement3.style.width = '900px'
+            newElement3.style.height = '80px'
+            newElement3.style.backgroundColor = '#c9c9c9'
+            newElement3.style.textAlign = 'center'
+            newElement3.style.lineHeight = '80px'
+            newElement3.style.margin = '10px'
+            var newText = document.createTextNode('( ' +i +' )  '+ type[i-1]);
+            newElement3.appendChild(newText)
+            document.body.appendChild(newElement3);
 
-        var myChart2 = echarts.init(document.getElementById('m_system'));
-        // 显示标题，图例和空的坐标轴
-        myChart2.setOption({
-            title : {
-                text: '华为手机系统排行',
-                subtext: '京东数据',
-                x:'center'
-            },
-            tooltip : {
-                trigger: 'item',
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
-            },
-            legend: {
-                orient: 'vertical',
-                left: 'left',
-                data: daxian_csvv_n
-            },
-            series : [
-                {
-                    name: '华为手机系统排行',
-                    type: 'pie',
-                    radius : '55%',
-                    center: ['50%', '60%'],
-                    data:daxian_csvv,
-                    itemStyle: {
-                        emphasis: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+            var newElement=document.createElement("div");
+            newElement.id = 'sales'+i;
+            newElement.style.width = '900px'
+            newElement.style.height = '400px'
+            document.body.appendChild(newElement);
+
+            var newElement2=document.createElement("div");
+            newElement2.id = 'mSystem'+i;
+            newElement2.style.width = '900px'
+            newElement2.style.height = '400px'
+            document.body.appendChild(newElement2);
+
+            var myChart1 = echarts.init(document.getElementById('sales'+i));
+            // 显示标题，图例和空的坐标轴
+            myChart1.setOption({
+                title: {
+                    text: '【'+type[i-1]+'】手机热门排行'
+                },
+                tooltip: {},
+                legend: {
+                    data:[type[i-1]]
+                },
+                xAxis: {
+                    data: pro[i-1].categories,
+                    axisLabel : {
+                    show:true,
+                    interval: 0
+                   }
+                },
+                yAxis: {},
+                series: [{
+                    name: type[i-1],
+                    type: 'bar',
+                    data:pro[i-1].data
+                }]
+            });
+
+            var myChart2 = echarts.init(document.getElementById('mSystem'+i));
+            // 显示标题，图例和空的坐标轴
+            myChart2.setOption({
+                title : {
+                    text: type[i-1]+'手机系统排行',
+                    subtext: '京东数据',
+                    x:'center'
+                },
+                tooltip : {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: vers[i-1]
+                },
+                series : [
+                    {
+                        name: type[i-1]+'手机系统排行',
+                        type: 'pie',
+                        radius : '55%',
+                        center: ['50%', '60%'],
+                        data:sys[i-1],
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
                         }
                     }
-                }
-            ]
-        });
-        
+                ]
+            });
+
+        }
+
     </script>
 </body>
 
