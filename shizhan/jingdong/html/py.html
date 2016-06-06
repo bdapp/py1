@@ -15,7 +15,7 @@
     <script type="text/javascript">
         for(var i=1;i<=num;i++){
             var newElement3=document.createElement("div");
-            newElement3.style.width = '900px'
+            newElement3.style.width = '100%'
             newElement3.style.height = '80px'
             newElement3.style.backgroundColor = '#c9c9c9'
             newElement3.style.textAlign = 'center'
@@ -27,13 +27,13 @@
 
             var newElement=document.createElement("div");
             newElement.id = 'sales'+i;
-            newElement.style.width = '900px'
+            newElement.style.width = '100%'
             newElement.style.height = '400px'
             document.body.appendChild(newElement);
 
             var newElement2=document.createElement("div");
             newElement2.id = 'mSystem'+i;
-            newElement2.style.width = '900px'
+            newElement2.style.width = '100%'
             newElement2.style.height = '400px'
             document.body.appendChild(newElement2);
 
@@ -98,6 +98,42 @@
             });
 
         }
+
+
+
+        var hotElement=document.createElement("div");
+            hotElement.id = 'hots';
+            hotElement.style.width = '100%'
+            hotElement.style.height = '400px'
+            document.body.appendChild(hotElement);
+
+        var hotChart = echarts.init(document.getElementById('hots'));
+        // 显示标题，图例和空的坐标轴
+            hotChart.setOption({
+                title: {
+                    text: '手机热门排行'
+                },
+                tooltip: {},
+                legend: {
+                    data:'aa',
+                },
+                xAxis: {
+                    data: hots.name,
+                    axisLabel : {
+                    show:true,
+                    interval: 0
+                   }
+                },
+                yAxis: {},
+                series: [{
+                    name: '手机',
+                    type: 'bar',
+                    data:hots.count,
+                    color: '#2f4554'
+                }],
+                backgroundColor: 'rgba(10,161,255,0.1)',
+                color: ['#336699','#ff0088']
+            });
 
     </script>
 </body>

@@ -10,7 +10,7 @@ class ADD:
 
     def __init__(self, file):
         self.file_name = file
-
+        self.csv_list = self.get_csv_list()
 
     # 处理系统版本字段
     def get_system_version(self, version):
@@ -49,44 +49,43 @@ class ADD:
 
 
     def get_hots(self):
-        ll = self.get_csv_list()
+
         # 对list的第一次排序(产品型号)
-        ll.sort(lambda x, y: cmp(x[0], y[0]))
-        # print ll
+        self.csv_list.sort(lambda x, y: cmp(x[0], y[0]))
+        #print ll
         # 对排序好的list的评价进行合并试算
         n = ''
         v = 0
         ln = []
-        for i in ll:
+        for i in self.csv_list:
             # 型号不为空并且和上一条记录相同的，评价值相加
             if i[0] != '' and i[0] == n:
                 v = v + i[1]
                 continue
             else:
-                ln.append((n, v))
                 n = i[0]
                 v = i[1]
-
-        # print len(ln)
+                if len(n) > 1 and i[0] != '其它':
+                    ln.append((n, v))
 
         # 对相加生成的新list进行按评价多少排序
         ln.sort(lambda x, y: cmp(x[1], y[1]))
         # 对排序完的新list进行反转（变成从大到小）
         ln.reverse()
-
+        #print ln
         return ln
 
 
     def get_version(self):
-        ll = self.get_csv_list()
+        #ll = self.get_csv_list()
         # 对list的第一次排序(系统版本)
-        ll.sort(lambda x, y: cmp(x[2], y[2]))
+        self.csv_list.sort(lambda x, y: cmp(x[2], y[2]))
         # print ll
         # 对排序好的list的评价进行合并试算
         c = ''
         v = 0
         ln = []
-        for i in ll:
+        for i in self.csv_list:
             # 型号不为空并且和上一条记录相同的，评价值相加
             if i[2] != '' and i[2] == c:
                 v = v + i[1]
@@ -106,3 +105,15 @@ class ADD:
         # print ln
         return ln
 
+
+    # 品牌的总评价数
+    def get_all_tips(self):
+        num = 0
+        for i in self.csv_list:
+            num += i[1]
+        return num
+
+
+# add = ADD('./file/360.csv')
+# add.get_hots()
+# add.get_all_tips()
