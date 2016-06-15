@@ -36,7 +36,7 @@ class REFRESH:
             user_agent = random.choice(self.user_agents)
             proxy = urllib2.ProxyHandler({'http':''+ ip +''})
             opener = urllib2.build_opener(proxy)
-            opener.addheaders = [('User_agent',user_agent)]
+            opener.addheaders = [('User-Agent',user_agent)]
             opener.open(self.baseUrl, timeout=10)
 
         except urllib2.HTTPError, e:
@@ -71,9 +71,18 @@ class REFRESH:
             else:
                 randomTime = 0
 
-            endTime = time.time()
-            print '第'+ str(count) +'次耗时: ' + str(endTime - startTime - randomTime)
+            costTime = time.time() - startTime - randomTime
+            print '第'+ str(count) +'次耗时: ' + str(costTime)
+
+            # 耗时结果写入文件
+            if costTime<5 :
+                with open('./time.txt', 'ab') as f:
+                    localTime = time.asctime(time.localtime(time.time()))
+                    f.write(localTime + '\t\t耗时: ' + str(costTime))
+                    f.write('\t\tip ------ ' + ip + '\n')
+
             count += 1
+
 
 
     def open(self):

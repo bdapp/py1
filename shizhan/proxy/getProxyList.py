@@ -21,7 +21,7 @@ class PROXY:
     def getProxy(self):
         # 走代理
         enable_proxy = False
-        proxy_handler = urllib2.ProxyHandler({'http':'http://222.131.153.18:8888'})
+        proxy_handler = urllib2.ProxyHandler({'http':'http://116.54.123.48:8888'})
         null_proxy_handler = urllib2.ProxyHandler({})
         if enable_proxy:
             opener = urllib2.build_opener(proxy_handler)
