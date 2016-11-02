@@ -11,7 +11,7 @@ import getProxyList
 class REFRESH:
     def __init__(self):
 
-        self.baseUrl = 'http://www.cashlai.com'
+        self.baseUrl = 'http://pv.sohu.com/cityjson?ie=utf-8'
 
         self.user_agents = [
             'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36',
@@ -33,8 +33,10 @@ class REFRESH:
     def refreshPage(self, ip):
         try:
             print 'ip ------ ' + ip
+            h = ip.split('://')
+
             user_agent = random.choice(self.user_agents)
-            proxy = urllib2.ProxyHandler({'http':''+ ip +''})
+            proxy = urllib2.ProxyHandler({h[0]:h[1]})
             opener = urllib2.build_opener(proxy)
             opener.addheaders = [('User-Agent',user_agent)]
             opener.open(self.baseUrl, timeout=10)
@@ -75,7 +77,7 @@ class REFRESH:
             print '第'+ str(count) +'次耗时: ' + str(costTime)
 
             # 耗时结果写入文件
-            if costTime<5 :
+            if randomTime != 0 :
                 with open('./time.txt', 'ab') as f:
                     localTime = time.asctime(time.localtime(time.time()))
                     f.write(localTime + '\t\t耗时: ' + str(costTime))

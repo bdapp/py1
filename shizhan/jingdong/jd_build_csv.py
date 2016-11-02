@@ -21,7 +21,7 @@ class JD:
 
     # 开启网络请求
     def requestOpener(self, url):
-        flag = 0
+        flag = 1
         while True:
             try:
                 opener = urllib2.build_opener(urllib2.HTTPHandler())
@@ -71,6 +71,7 @@ class JD:
                                '操作系统版本','CPU品牌','CPU型号','CPU核数',
                                'GPU','机身内存','运行内存','最大存储扩展',
                                '屏幕尺寸','分辨率','后置摄像头','前置摄像头',
+                                'NFC1', 'NFC2', 'NFC3', 'NFC4', '其他',
                                 '链接','备注','店铺','评价'])
 
                 for x in self.paramList:
@@ -84,6 +85,12 @@ class JD:
     def getDetailParame(self, content, url, name, comment, shop, price):
         p1 = re.compile('<td class=.*?tdTitle.*?>(.*?)<.*?<td>(.*?)<', re.S)
         r1 = re.findall(p1, content)
+
+        n = re.compile('NFC.*?/td>', re.S)
+        nfc = re.findall(n, content)
+
+        # print nfc.group(0)
+
 
         parameDict = {}
         parames = []
@@ -109,6 +116,11 @@ class JD:
         parames.append(parameDict.get('分辨率',''))
         parames.append(parameDict.get('后置摄像头',''))
         parames.append(parameDict.get('前置摄像头',''))
+        parames.append(parameDict.get('NFC\\/NFC模式',''))
+        parames.append(parameDict.get('NFC(近场通讯)',''))
+        parames.append(parameDict.get('NFC',''))
+        parames.append(parameDict.get('NFC模式',''))
+        parames.append(parameDict.get('其他',''))
         parames.append('http:'+url)
         parames.append(name)
         parames.append(shop)
@@ -121,13 +133,19 @@ class JD:
 
     # 获取产品价格
     def getPrice(self, id):
-        co = self.requestOpener(
-            'http://p.3.cn/prices/get?type=1&area=1_72_2799&pdtk=&pduid=360917087&pdpin=&pdbp=0&skuid=J_' + id + '&callback=cnp')
-        if co != '':
-            p = re.compile('"p":"(.*?)"', re.S)
-            r = re.search(p, co)
-            return r.group(1)
-        else:
+        try:
+            # co = self.requestOpener(
+            #     'http://p.3.cn/prices/get?type=1&area=1_72_2799&pdtk=&pduid=360917087&pdpin=&pdbp=0&skuid=J_' + id + '&callback=cnp')
+            co = self.requestOpener(
+                'http://p.3.cn/prices/mgets?callback=jQuery4067603&type=1&area=1_72_4137_0&pdtk=&pduid=234201030&pdpin=&pdbp=0&skuIds=J_'+id)
+            if co != '':
+                p = re.compile('"p":"(.*?)"', re.S)
+                r = re.search(p, co)
+                return r.group(1)
+            else:
+                return ''
+        except Exception:
+            print '获取产品价格失败'
             return ''
 
 
@@ -146,7 +164,9 @@ class JD:
     # 获取每个产品的详情页链接
     def getDetailUrl(self, content):
         try:
-            pattern = re.compile('<div class="p-icons J-pro-icons".*?href="(.*?)".*?<em>(.*?)</em>.*?#comment">(.*?)<.*?data-shop_name="(.*?)"', re.S)
+            #( url, name, comment, shop, price):
+            # pattern = re.compile('<div class="p-icons J-pro-icons".*?href="(.*?)".*?<em>(.*?)</em>.*?#comment">(.*?)<.*?data-shop_name="(.*?)"', re.S)
+            pattern = re.compile('<div class="gl-i-wrap j-sku-item".*?<a target="_blank" title="" href="(.*?)".*?<em>(.*?)</em>.*?data-shop_name="(.*?)"', re.S)
             items = re.findall(pattern, content)
             for i in items:
                 print 'url----: ' + i[0] + ' name-----: ' + i[1]
@@ -155,7 +175,7 @@ class JD:
                     price = self.getPrice(id)
                     co = self.requestOpener('http://item.m.jd.com/ware/detail.json?wareId=' + id)
                     if co != '':
-                        self.getDetailParame(co, i[0], i[1], i[2], i[3], price)
+                        self.getDetailParame(co, i[0], i[1], i[2], '222', price)
 
         except Exception:
             print '获取产品链接失败'

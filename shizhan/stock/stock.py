@@ -49,7 +49,7 @@ class STOCK:
                 # os.system('clear')
                  print '\033[1;32;40m'
 
-            print str(price) + '\t' + str(money) + '\t' + str(percent) + '\t' + time;
+            print str(price) + '\t' + str(money) + '\t' + str(percent) + '%\t' + time;
 
 
         except urllib2.HTTPError, e:
@@ -71,5 +71,5 @@ class STOCK:
 lf = STOCK()
 while(0<1):
     time.sleep(3)
-    lf.wang('sz000014')
+    lf.wang('sz000838')
 

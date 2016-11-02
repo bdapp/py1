@@ -21,7 +21,7 @@ class PROXY:
     def getProxy(self):
         # 走代理
         enable_proxy = False
-        proxy_handler = urllib2.ProxyHandler({'http':'http://116.54.123.48:8888'})
+        proxy_handler = urllib2.ProxyHandler({'http':'116.54.123.48:8888'})
         null_proxy_handler = urllib2.ProxyHandler({})
         if enable_proxy:
             opener = urllib2.build_opener(proxy_handler)
@@ -31,8 +31,9 @@ class PROXY:
 
         response = opener.open(self.url)
         result = response.read()
+        # print result
 
-        pattern = re.compile("<td style='text-align: center; color:blue;'>(.*?)<.*?<td>(.*?)</td.*?<img src=(.*?)/>.*?<td title='(.*?)秒'", re.S)
+        pattern = re.compile("<td style='text-align: center; color:blue;'>(.*?)<.*?<td>(.*?)</td.*?<img src=(.*?)/>.*?;overflow:hidden;' title='(.*?)'.*?<td title='(.*?)秒'", re.S)
         items = re.findall(pattern, result)
 
         with open(self.fileName, 'ab') as f:
@@ -100,12 +101,18 @@ class PROXY:
             elif x[2].find('pzAwMAO0OO0O') != -1:
                 p = '63000'
 
-            if x[3].find('999') == -1:
+            if x[4].find('999') == -1:
                 with open(self.fileName, 'ab') as f:
-                    f.writelines(x[0] + '\t' + x[1] + '\t' + p + '\t' + x[3] + '\n')
+                    f.writelines(x[0] + '\t' + x[1] + '\t' + p + '\t' + x[3] + '\t' + x[4] + '\n')
                     if p != 'null':
-                        ipList.append('http://'+x[1]+':' + p)
+                        if x[3].find('/')!=-1:
+                            h = x[3].split('/')
+                            ipList.append(h[0].lower() + '://'+x[1]+':' + p)
+                            ipList.append(h[1].lower() + '://'+x[1]+':' + p)
+                        else:
+                            ipList.append(x[3].lower()+ '://' + x[1] + ':' + p)
 
+        print ipList
         print '写入完成'
         return ipList
 

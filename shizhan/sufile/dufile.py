@@ -1,22 +1,23 @@
 # -*- coding:utf-8 -*-
 
-# 通过代理刷点击量
+# 下载http://www.dufile.com/
+# 网站是以Cookie来限制同时下载数量
+
 import urllib2
 import urllib
 import random
-import time
 import re
 from socket import error as SocketError
 from cookielib import CookieJar
 
 
+class DUFILE:
 
-class REFRESH:
     def __init__(self):
-
-        self.baseUrl = 'http://dufile.com/downcode.php'
-        self.downUrl = 'http://www.sufile.com/dd.php?file_key=5f05c94cd4847078&p=0'
-
+        # 代理地址
+        self.PROXY_IP = '120.52.72.58:80'
+        # 验证码页
+        self.CODE_URL = 'http://dufile.com/downcode.php'
 
         self.user_agents = [
             'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36',
@@ -33,44 +34,38 @@ class REFRESH:
             'Mozilla/5.0 (iPad; CPU OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'
         ]
 
-
-    # 打开页面
-    def refreshPage(self, ip):
+    # 打开验证码页面，获取cookie
+    def start(self):
         try:
-            # fileID = raw_input('The file id is: ')
-            fileID = 'b00b3c393a63a745'
-
-            print 'ip ------ ' + ip
-            user_agent = random.choice(self.user_agents)
-            proxy = urllib2.ProxyHandler({'http':''+ ip +''})
-            opener = urllib2.build_opener(proxy)
-            opener.addheaders = [
-                ('User-agent',user_agent),
-                ('Referer','http://www.sufile.com/down/'+fileID+'.html'),
-                ('Host','www.sufile.com'),
-                ('Origin','http://www.sufile.com'),
-                ('DNT','1')
-            ]
-
+            fileID = raw_input('The file id is: ')
+            # 配置代理
+            proxy = urllib2.ProxyHandler({'http': '' + self.PROXY_IP + ''})
+            # 配置Cookie
             cj = CookieJar()
             cookieHandle = urllib2.HTTPCookieProcessor(cj)
-            opener = urllib2.build_opener(cookieHandle)
+            # 走代理和带cookie
+            # oo = urllib2.build_opener(proxy, cookieHandle)
+            # 只带cookie
+            oo = urllib2.build_opener(cookieHandle)
+            # 随机获取userAgent
+            user_agent = random.choice(self.user_agents)
+            oo.addheaders = [
+                ('User-agent', user_agent),
+                ('Referer', 'http://dufile.com/file/' + fileID + '.html'),
+                ('Host', 'www.dufile.com'),
+                ('Origin', 'http://www.dufile.com'),
+                ('DNT', '1')
+            ]
 
-            # cookies = urllib2.HTTPCookieProcessor()
-            # opener.open(cookies)
-
-
-            r = opener.open(self.baseUrl, timeout=10)
+            r = oo.open(self.CODE_URL, timeout=10)
             d = r.read()
-
-            print d
 
             with open('./code.jpg', 'wb') as f:
                 f.write(d)
 
             code = raw_input('input code:')
 
-            self.getDown(ip, code, cookieHandle, fileID)
+            self.getDown(oo, code, fileID)
 
         except urllib2.HTTPError, e:
             print 'HTTPError: ' + str(e.code)
@@ -85,29 +80,18 @@ class REFRESH:
         return True
 
 
-    def getDown(self, ip, code, cookieHandle, fileID):
+    # 验证输入的验证码
+    def getDown(self, oo, code, fileID):
         try:
-
-            user_agent = random.choice(self.user_agents)
-            proxy = urllib2.ProxyHandler({'http':''+ ip +''})
-            opener = urllib2.build_opener(proxy)
-            opener.addheaders = [
-                ('User-Agent',user_agent),
-                ('Referer','http://www.sufile.com/down/'+fileID+'.html'),
-                ('Host','www.sufile.com'),
-                ('DNT','1')
-            ]
-            formdata = { "action" : 'yz', "id": fileID, "code" : code }
-            data_encoded = urllib.urlencode(formdata)
-            opener = urllib2.build_opener(cookieHandle)
-            r = opener.open(self.baseUrl, data_encoded, timeout=10)
+            formData = {"action": 'yz', "id": fileID, "code": code}
+            data_encoded = urllib.urlencode(formData)
+            r = oo.open(self.CODE_URL, data_encoded, timeout=10)
             d = r.read()
 
             print 'code --- ' + str(d)
 
-
             if (d == '1'):
-                self.getResult(ip, cookieHandle, fileID)
+                self.getResult(oo, fileID, d)
 
         except urllib2.HTTPError, e:
             print 'HTTPError: ' + str(e.code)
@@ -122,31 +106,52 @@ class REFRESH:
         return True
 
 
-
-    def getResult(self, ip, cookieHandle, fileID):
+    # 打开下载页面
+    def getResult(self, oo, fileID, code):
         try:
+            formData = {"file_key": fileID, "p": code}
+            data_encoded = urllib.urlencode(formData)
+            r = oo.open('http://www.dufile.com/dd.php?file_key=' + fileID + '&p=' + code, data_encoded, timeout=10)
 
-            user_agent = random.choice(self.user_agents)
-            proxy = urllib2.ProxyHandler({'http':''+ ip +''})
-            opener = urllib2.build_opener(proxy)
-            opener.addheaders = [
-                ('User-Agent',user_agent),
-                ('Referer','http://www.sufile.com/down/'+fileID+'.html'),
-                ('Host','www.sufile.com'),
-                ('DNT','1')
-            ]
-
-            opener = urllib2.build_opener(cookieHandle)
-            r = opener.open('http://www.sufile.com/dd.php?file_key='+fileID+'&p=0', timeout=10)
             d = r.read()
 
             with open('./result.html', 'wb') as f:
                 f.write(d)
 
-
             p = re.compile('<a id="downs" href="(.*?)"', re.S)
             r = re.search(p, d)
-            print r.group(1).strip()
+            url = r.group(1).strip()
+            print url
+
+            self.downLoadFile(oo, url)
+
+        except urllib2.HTTPError, e:
+            print 'HTTPError: ' + str(e.code)
+            return False
+        except urllib2.URLError, e:
+            print 'URLError: ' + str(e.reason)
+            return False
+        except SocketError as e:
+            print 'SocketError: ' + str(e.errno)
+            return False
+
+        return True
+
+
+    # 下载文件
+    def downLoadFile(self, oo, url):
+        try:
+            p = re.compile('/down/(.*?)\?', re.S)
+            r = re.search(p, url)
+            file = r.group(1).strip()
+
+            print file
+
+            r = oo.open(url, timeout=10)
+            d = r.read()
+
+            with open(file, 'wb') as f:
+                f.write(d)
 
 
         except urllib2.HTTPError, e:
@@ -162,7 +167,5 @@ class REFRESH:
         return True
 
 
-
-refresh = REFRESH()
-refresh.refreshPage('http://163.125.146.115:9897')
-
+dufile = DUFILE()
+dufile.start()
