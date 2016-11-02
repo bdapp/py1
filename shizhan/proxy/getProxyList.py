@@ -8,9 +8,9 @@ import time
 class PROXY:
     def __init__(self):
         # 国内普通
-        # self.url = 'http://proxy.mimvp.com/free.php?proxy=in_tp'
+        self.url = 'http://proxy.mimvp.com/free.php?proxy=in_tp'
         # 国内高匿
-        self.url = 'http://proxy.mimvp.com/free.php?proxy=in_hp'
+        # self.url = 'http://proxy.mimvp.com/free.php?proxy=in_hp'
         # 国外普通
         # self.url = 'http://proxy.mimvp.com/free.php?proxy=out_tp'
         # 国外高匿
