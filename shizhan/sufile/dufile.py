@@ -81,7 +81,7 @@ class DUFILE:
 
 
     # 验证输入的验证码
-    def getDown(self, oo, code, fileID):
+    def VerifyCode(self, oo, code, fileID):
         try:
             formData = {"action": 'yz', "id": fileID, "code": code}
             data_encoded = urllib.urlencode(formData)
@@ -107,7 +107,7 @@ class DUFILE:
 
 
     # 打开下载页面
-    def getResult(self, oo, fileID, code):
+    def openDownPage(self, oo, fileID, code):
         try:
             formData = {"file_key": fileID, "p": code}
             data_encoded = urllib.urlencode(formData)
