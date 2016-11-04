@@ -65,7 +65,7 @@ class DUFILE:
 
             code = raw_input('input code:')
 
-            self.getDown(oo, code, fileID)
+            self.VerifyCode(oo, code, fileID)
 
         except urllib2.HTTPError, e:
             print 'HTTPError: ' + str(e.code)
@@ -91,7 +91,7 @@ class DUFILE:
             print 'code --- ' + str(d)
 
             if (d == '1'):
-                self.getResult(oo, fileID, d)
+                self.openDownPage(oo, fileID, d)
 
         except urllib2.HTTPError, e:
             print 'HTTPError: ' + str(e.code)
