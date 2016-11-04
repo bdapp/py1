@@ -18,6 +18,8 @@ class Tool:
         removeBlank = re.compile('   ')
         #替换H字体
         removeH = re.compile('<h.*?>|<H.*?>')
+        # 替换"号
+        removeY = re.compile('"')
 
         def replace(self, x):
                 x = re.sub(self.removeImg, "", x)
@@ -28,4 +30,5 @@ class Tool:
                 # x = re.sub(self.removeOther, "", x)
                 x = re.sub(self.removeBlank, "", x)
                 x = re.sub(self.removeH, "", x)
+                x = re.sub(self.removeY, "", x)
                 return x.strip()
