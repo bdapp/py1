@@ -8,7 +8,7 @@ class SQLDB:
     def __init__(self):
         self.host = 'localhost'
         self.user = 'root'
-        self.password = 'hs2014'
+        self.password = 'eagle'
         self.db = 'py_test'
         self.port = 3306
         self.charset = 'utf8'
@@ -34,12 +34,15 @@ class SQLDB:
             self.cursor.execute(sql);
             results = self.cursor.fetchall()
 
-            for row in results:
-                print row[0]
+            # for row in results:
+            #     print row[0]
+
+            return results
 
         except MySQLdb.Error, e:
             print 'mysql select error!'
             print e
+            return
 
 
     # 插入数据库
