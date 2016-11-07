@@ -1,7 +1,7 @@
 #! /usr/bin/python
-http://m.budejie.com/text/8174
-
-http://m.budejie.com/pic/11854
+# http://m.budejie.com/text/8174
+#
+# http://m.budejie.com/pic/11854
 # -*- coding:utf-8 -*-
 
 import urllib2
