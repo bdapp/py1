@@ -28,7 +28,7 @@ class LF_TUPIAN:
     def queryYesterday(self):
         try:
 
-            sql = 'select `title` from `tupian` where `online_time` = (select `online_time` from `tupian` order by `create_time` desc limit 1);'
+            sql = 'select `title` from `lf_tupian` where `online_time` = (select `online_time` from `lf_tupian` order by `create_time` desc limit 1);'
             names = self.db.selectDB(sql)
 
             self.oldDatas = names;
@@ -107,7 +107,7 @@ class LF_TUPIAN:
 
                 # 插入新数据
                 time.sleep(0.1)
-                sql = "insert into `tupian` (`tid`, `title`, `online_time`, `pic`, `gif`, `author`, `type`, `create_by`, `update_by`, `create_time`, `update_time`, `status`) values (uuid(), '"+title+"','"+online+"','"+pic+"','"+gif+"','"+author+"','"+type+"','admin','admin',now(),now(),0);"
+                sql = "insert into `lf_tupian` (`tid`, `title`, `online_time`, `pic`, `gif`, `author`, `type`, `create_by`, `update_by`, `create_time`, `update_time`, `status`) values (uuid(), '"+title+"','"+online+"','"+pic+"','"+gif+"','"+author+"','"+type+"','admin','admin',now(),now(),0);"
                 print sql
                 self.db.insertDB(sql)
 

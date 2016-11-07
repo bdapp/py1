@@ -1,4 +1,7 @@
 #! /usr/bin/python
+http://m.budejie.com/text/8174
+
+http://m.budejie.com/pic/11854
 # -*- coding:utf-8 -*-
 
 import urllib2
@@ -28,7 +31,7 @@ class LF_TUPIAN:
     def queryYesterday(self):
         try:
 
-            sql = 'select `title` from `wangwen` where `online_time` = (select `online_time` from `wangwen` order by `create_time` desc limit 1);'
+            sql = 'select `title` from `lf_wangwen` where `online_time` = (select `online_time` from `lf_wangwen` order by `create_time` desc limit 1);'
             names = self.db.selectDB(sql)
 
             self.oldDatas = names;
@@ -97,7 +100,7 @@ class LF_TUPIAN:
 
                 # 插入新数据
                 time.sleep(0.1)
-                sql = "insert into `wangwen` (`pid`, `title`, `content`, `online_time`, `author`, `type`, `create_by`, `update_by`, `create_time`, `update_time`, `status`) values (uuid(), '"+title+"','"+content+"','"+online+"','"+author+"','"+type+"','admin','admin',now(),now(),0);"
+                sql = "insert into `lf_wangwen` (`pid`, `title`, `content`, `online_time`, `author`, `type`, `create_by`, `update_by`, `create_time`, `update_time`, `status`) values (uuid(), '"+title+"','"+content+"','"+online+"','"+author+"','"+type+"','admin','admin',now(),now(),0);"
                 print sql
                 self.db.insertDB(sql)
 

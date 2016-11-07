@@ -8,7 +8,7 @@ class SQLDB:
     def __init__(self):
         self.host = 'localhost'
         self.user = 'root'
-        self.password = 'eagle'
+        self.password = 'hs2014'
         self.db = 'py_test'
         self.port = 3306
         self.charset = 'utf8'
