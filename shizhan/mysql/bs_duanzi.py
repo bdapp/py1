@@ -52,13 +52,13 @@ class LF_WANGWEN:
                 onlineTime = self.tool.replace(i[1])
                 content = self.tool.replace(i[2])
 
-                print author
-                print onlineTime
-                print content
+                # print author
+                # print onlineTime
+                # print content
 
-                # sql = "insert into `wangwen` (`pid`, `title`, `content`, `online_time`, `author`, `type`, `create_by`, `update_by`, `create_time`, `update_time`, `status`) values (uuid(), '"+title+"','"+content+"','"+online+"','"+author+"','"+type+"','admin','admin',now(),now(),0);"
-                # print sql
-                # self.db.insertDB(sql)
+                sql = "insert into `bs_duanzi` (`tid`, `author`, `content`, `online_time`, `update_time`, `status`) values (uuid(), '"+author+"','"+content+"','"+onlineTime+"',now(),0);"
+                print sql
+                self.db.insertDB(sql)
 
 
         except urllib2.HTTPError, e:
@@ -84,13 +84,13 @@ class LF_WANGWEN:
 
 
 lf = LF_WANGWEN()
-# lf.connect()
+lf.connect()
 start = time.time()
 
-for i in range(1, 2, 1):
+for i in range(8175, 0, -1):
     print '\n页码~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' + str(i)
     lf.wang(i)
-# lf.close()
+lf.close()
 
 end = time.time() - start
 print '总共用时：' + str(end)

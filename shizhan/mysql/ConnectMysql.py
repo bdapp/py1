@@ -9,7 +9,7 @@ class SQLDB:
         self.host = 'localhost'
         self.user = 'root'
         self.password = 'hs2014'
-        self.db = 'py_test'
+        self.db = 'db_joke'
         self.port = 3306
         self.charset = 'utf8'
 

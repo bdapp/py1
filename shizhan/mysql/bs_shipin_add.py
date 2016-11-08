@@ -7,7 +7,7 @@ from socket import error as SocketError
 from cookielib import CookieJar
 import tools
 import ConnectMysql
-
+import datetime
 import time
 
 
@@ -15,8 +15,24 @@ class LF_WANGWEN:
 
     def __init__(self):
 
-        self.baseUrl = 'http://m.budejie.com/pic/'
+        self.baseUrl = 'http://m.budejie.com/video/'
         self.tool = tools.Tool()
+
+        self.oldDatas = ''
+
+
+    def queryLastData(self):
+        try:
+            sql = 'select online_time from bs_shipin order by online_time desc limit 1;'
+            online = self.db.selectDB(sql)
+
+            self.oldDatas = online;
+
+            return online
+
+        except Exception as e:
+            # print e
+            return
 
 
     def wang(self, value):
@@ -45,26 +61,28 @@ class LF_WANGWEN:
             o = opener.open(url, timeout=10)
             d = o.read()
 
-            pattern = re.compile('<li class="ui-border-b">.*?<h4 class="ui-nowrap">(.*?)</h4>.*?<p class="ui-nowrap">(.*?)</p>.*?<section class="ui-row-flex">(.*?)</section>.*?<section.*?data-url="(.*?)"', re.S)
+            pattern = re.compile('<li class="ui-border-b">.*?<h4 class="ui-nowrap">(.*?)</h4>.*?<p class="ui-nowrap">(.*?)</p>.*?<section class="ui-row-flex">(.*?)</section>.*?<section.*?<source src="(.*?)"', re.S)
             results = re.findall(pattern, d)
             for i in results:
                 author = self.tool.replace(i[0])
                 onlineTime = self.tool.replace(i[1])
                 content = self.tool.replace(i[2])
-                pic = self.tool.replace(i[3]).strip()
+                mp4 = self.tool.replace(i[3])
 
                 # print author
                 # print onlineTime
                 # print content
-                # print pic
+                # print mp4
 
-                jpg = gif = ''
-                if pic.rfind('.gif') == -1:
-                    jpg = pic
-                else:
-                    gif = pic
+                # 比较数据库最新一条数据,如果相同则跳出
+                for old in self.oldDatas:
+                    # 数据库查询出来的是unicode编码,要转成utf-8
+                    o = datetime.datetime.strptime(onlineTime, '%Y-%m-%d %H:%M:%S')
+                    if old[0] >= o:
+                        # 通知中断
+                        return
 
-                sql = "insert into `bs_tupian` (`pid`, `author`, `content`, `jpg`, `gif`, `online_time`, `update_time`, `status`) values (uuid(), '" + author + "','" + content + "','" + jpg + "','" + gif + "','" + onlineTime + "',now(),0);"
+                sql = "insert into `bs_shipin` (`sid`, `author`, `content`, `mp4`, `online_time`, `update_time`, `status`) values (uuid(), '" + author + "','" + content + "','" + mp4 + "','" + onlineTime + "',now(),0);"
                 print sql
                 self.db.insertDB(sql)
 
@@ -95,7 +113,10 @@ lf = LF_WANGWEN()
 lf.connect()
 start = time.time()
 
-for i in range(11857, 0, -1):
+# 先查出数据库最新一天的数据
+lf.queryLastData()
+
+for i in range(1, 3, 1):
     print '\n页码~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' + str(i)
     lf.wang(i)
 lf.close()

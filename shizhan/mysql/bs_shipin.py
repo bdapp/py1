@@ -45,22 +45,22 @@ class LF_WANGWEN:
             o = opener.open(url, timeout=10)
             d = o.read()
 
-            pattern = re.compile('<li class="ui-border-b">.*?<h4 class="ui-nowrap">(.*?)</h4>.*?<p class="ui-nowrap">(.*?)</p>.*?<section class="ui-row-flex">(.*?)</section>.*?<section.*?data-url="(.*?)"', re.S)
+            pattern = re.compile('<li class="ui-border-b">.*?<h4 class="ui-nowrap">(.*?)</h4>.*?<p class="ui-nowrap">(.*?)</p>.*?<section class="ui-row-flex">(.*?)</section>.*?<section.*?<source src="(.*?)"', re.S)
             results = re.findall(pattern, d)
             for i in results:
                 author = self.tool.replace(i[0])
                 onlineTime = self.tool.replace(i[1])
                 content = self.tool.replace(i[2])
-                pic = self.tool.replace(i[3])
+                mp4 = self.tool.replace(i[3])
 
                 print author
                 print onlineTime
                 print content
-                print pic
+                print mp4
 
-                # sql = "insert into `wangwen` (`pid`, `title`, `content`, `online_time`, `author`, `type`, `create_by`, `update_by`, `create_time`, `update_time`, `status`) values (uuid(), '"+title+"','"+content+"','"+online+"','"+author+"','"+type+"','admin','admin',now(),now(),0);"
-                # print sql
-                # self.db.insertDB(sql)
+                sql = "insert into `bs_shipin` (`sid`, `author`, `content`, `mp4`, `online_time`, `update_time`, `status`) values (uuid(), '" + author + "','" + content + "','" + mp4 + "','" + onlineTime + "',now(),0);"
+                print sql
+                self.db.insertDB(sql)
 
 
         except urllib2.HTTPError, e:
@@ -86,13 +86,13 @@ class LF_WANGWEN:
 
 
 lf = LF_WANGWEN()
-# lf.connect()
+lf.connect()
 start = time.time()
 
-for i in range(1, 4, 1):
+for i in range(4410, 0, -1):
     print '\n页码~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' + str(i)
     lf.wang(i)
-# lf.close()
+lf.close()
 
 end = time.time() - start
 print '总共用时：' + str(end)
