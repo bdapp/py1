@@ -61,13 +61,14 @@ class LF_WANGWEN:
             o = opener.open(url, timeout=10)
             d = o.read()
 
-            pattern = re.compile('<li class="ui-border-b">.*?<h4 class="ui-nowrap">(.*?)</h4>.*?<p class="ui-nowrap">(.*?)</p>.*?<section class="ui-row-flex">(.*?)</section>.*?<section.*?<source src="(.*?)"', re.S)
+            pattern = re.compile('<li class="ui-border-b">.*?<h4 class="ui-nowrap">(.*?)</h4>.*?<p class="ui-nowrap">(.*?)</p>.*?<section class="ui-row-flex">(.*?)</section>.*?<section.*?poster="(.*?)".*?<source src="(.*?)"', re.S)
             results = re.findall(pattern, d)
             for i in results:
                 author = self.tool.replace(i[0])
                 onlineTime = self.tool.replace(i[1])
                 content = self.tool.replace(i[2])
-                mp4 = self.tool.replace(i[3])
+                pic = self.tool.replace(i[3])
+                mp4 = self.tool.replace(i[4])
 
                 # print author
                 # print onlineTime
@@ -82,7 +83,7 @@ class LF_WANGWEN:
                         # 通知中断
                         return
 
-                sql = "insert into `bs_shipin` (`sid`, `author`, `content`, `mp4`, `online_time`, `update_time`, `status`) values (uuid(), '" + author + "','" + content + "','" + mp4 + "','" + onlineTime + "',now(),0);"
+                sql = "insert into `bs_shipin` (`sid`, `author`, `content`, `mp4`, `pic`, `online_time`, `update_time`, `status`) values (uuid(), '" + author + "','" + content + "','" + mp4 + "','" + pic + "','" + onlineTime + "',now(),0);"
                 print sql
                 self.db.insertDB(sql)
 
